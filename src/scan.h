@@ -1,11 +1,13 @@
 #ifndef _SCAN_H_
 #define _SCAN_H_
 
+#include "globals.h"
+
 class Scan {
 public:
   Scan() {};
 
-  int value();
+  Tokens::TOKENS next();
 };
 
 

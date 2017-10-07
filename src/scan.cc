@@ -1,5 +1,6 @@
+#include "globals.h"
 #include "scan.h"
 
-int Scan::value() {
-  return 10;
+Tokens::TOKENS Scan::next() {
+  return Tokens::ID;
 };

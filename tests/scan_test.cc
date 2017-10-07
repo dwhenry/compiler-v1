@@ -1,8 +1,10 @@
 #include "catch.hpp"
 #include "../src/scan.h"
 
-TEST_CASE("Scaning a source file", "[scan]" ) {
+TEST_CASE("Reading tokens from a string", "[scan]" ) {
   Scan * scan = new Scan();
 
-  REQUIRE( scan->value() == 9 );
+  SECTION("that contain a single reserverd word") {
+    REQUIRE( scan->next() == Tokens::ID );
+  }
 }

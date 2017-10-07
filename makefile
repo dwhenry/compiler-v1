@@ -4,8 +4,8 @@ CFLAGS = -std=c99 -pedantic -Wall
 
 all: app app_test
 
-scan.o: src/scan.h src/scan.cc
-	g++ -g -c src/scan.cc
+scan.o: src/scan.h src/scan.cc src/globals.h
+	g++ -g -c src/scan.cc src/globals.h
 
 main.o: src/main.cc src/scan.cc
 	g++ -g -c src/main.cc
