@@ -4,3 +4,6 @@
 Tokens::TOKENS Scan::next() {
   return Tokens::ID;
 };
+
+Scan::Scan(Config * config) {
+};

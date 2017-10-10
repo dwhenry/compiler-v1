@@ -2,10 +2,11 @@
 #define _SCAN_H_
 
 #include "globals.h"
+#include "config.h"
 
 class Scan {
 public:
-  Scan() {};
+  Scan(Config * config);
 
   Tokens::TOKENS next();
 };

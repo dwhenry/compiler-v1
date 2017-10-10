@@ -21,12 +21,17 @@ Config::Config(int argc, char * argv[]) {
 bool Config::hasFile() {
   if(this->source.empty())
     return false;
-  this->sourceFile.open(this->source);
-  if(this->sourceFile)
+  this->sourceStream.open(this->source);
+  if(this->sourceStream)
     return true;
   return false;
-}
+};
 
 bool Config::valid() {
   return !this->parseFailed && hasFile();
+};
+
+SourceFile * Config::sourceFile() {
+  std::ifstream *stream = &(this->sourceStream);
+  return new SourceFile(stream);
 };
