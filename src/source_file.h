@@ -9,9 +9,12 @@ private:
   std::ifstream * stream;
 
 public:
+  int lineNumber;
+  int position;
   SourceFile() {}; // for testing
   SourceFile(std::ifstream * stream);
-  virtual std::string nextChar();
+  virtual int nextChar();
+  virtual int previewChar();
 };
 
 #endif

@@ -19,7 +19,7 @@ main.o: src/main.cc src/scan.cc
 app: main.o source_file.o config.o scan.o
 	g++ $(CFLAGS) -g -o main main.o source_file.o config.o scan.o
 
-scan_test.o: tests/scan_test.cc src/scan.cc
+scan_test.o: tests/scan_test.cc src/scan.cc tests/fakes/fake_config.h tests/fakes/fake_source_file.h
 	g++ $(CFLAGS) -g -c tests/scan_test.cc
 
 config_test.o: tests/config_test.cc
@@ -28,7 +28,7 @@ config_test.o: tests/config_test.cc
 test.o: tests/test.cc
 	g++ $(CFLAGS) -g -c tests/test.cc
 
-app_test: test.o source_file.o config_test.o config.o scan_test.o scan.o
+app_test: test.o source_file.o config_test.o config.o scan_test.o scan.o tests/fakes/fake_config.h tests/fakes/fake_source_file.h
 	g++ $(CFLAGS) -g -o app_test test.o source_file.o config_test.o config.o scan_test.o scan.o
 
 clean:

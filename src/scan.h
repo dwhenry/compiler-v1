@@ -4,11 +4,17 @@
 #include "globals.h"
 #include "config.h"
 
+
 class Scan {
+  enum STATES { START, DONE, IS_NUMBER, IS_WORD, IS_COMMENT };
+
+  SourceFile * sourceFile;
+  TokenType::TOKENS lookup(std::string tokenString);
+
 public:
   Scan(Config * config);
 
-  Tokens::TOKENS next();
+  TokenDetails * next();
 };
 
 
