@@ -15,7 +15,7 @@ TEST_CASE("Parsing config variables", "[scan]" ) {
     argv[1] = (char *)"app_test";
     Config * config = new Config(2, argv);
 
-    REQUIRE( config->valid() );
+    CHECK( config->valid() );
   }
 
   SECTION("when invalid file is specified") {
@@ -38,8 +38,8 @@ TEST_CASE("Parsing config variables", "[scan]" ) {
     argv[2] = (char *)"--echoSource\n";
     Config * config = new Config(3, argv);
 
-    REQUIRE( config->valid() );
-    REQUIRE( config->EchoSource );
+    CHECK( config->valid() );
+    CHECK( config->EchoSource );
   }
 
   SECTION("invalid when invalid flag is passed in") {

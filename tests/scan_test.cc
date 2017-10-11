@@ -16,8 +16,8 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
 
     config->setData( fakeFileData, 1);
     tokenDetails = scan->next();
-    REQUIRE( tokenDetails->token == TokenType::IF );
-    REQUIRE( tokenDetails->str == "if" );
+    CHECK( tokenDetails->token == TokenType::IF );
+    CHECK( tokenDetails->str == "if" );
   }
 
   SECTION("that contain a single number") {
@@ -25,8 +25,8 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
     config->setData( fakeFileData, 1);
 
     tokenDetails = scan->next();
-    REQUIRE( tokenDetails->token == TokenType::NUM );
-    REQUIRE( tokenDetails->str == "1234" );
+    CHECK( tokenDetails->token == TokenType::NUM );
+    CHECK( tokenDetails->str == "1234" );
   }
 
   SECTION("that contain an identifier") {
@@ -34,8 +34,8 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
     config->setData( fakeFileData, 1);
 
     tokenDetails = scan->next();
-    REQUIRE( tokenDetails->token == TokenType::ID );
-    REQUIRE( tokenDetails->str == "hi" );
+    CHECK( tokenDetails->token == TokenType::ID );
+    CHECK( tokenDetails->str == "hi" );
   }
 
   SECTION("it can detect the end of the file") {
@@ -44,7 +44,7 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
 
     scan->next();
     tokenDetails = scan->next();
-    REQUIRE( tokenDetails->token == TokenType::ENDFILE );
+    CHECK( tokenDetails->token == TokenType::ENDFILE );
   }
 
   SECTION("that contain a value assignment") {
@@ -93,7 +93,7 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
 
     scan->next();
     tokenDetails = scan->next();
-    REQUIRE( tokenDetails->token == TokenType::ENDFILE );
+    CHECK( tokenDetails->token == TokenType::ENDFILE );
   }
 
   SECTION("will not eb tricked by stupid comments") {
@@ -101,7 +101,7 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
     config->setData( fakeFileData, 1);
 
     tokenDetails = scan->next();
-    REQUIRE( tokenDetails->token == TokenType::ENDFILE );
+    CHECK( tokenDetails->token == TokenType::ENDFILE );
   }
 
   SECTION("will ignore comments before a token") {
@@ -109,8 +109,8 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
     config->setData( fakeFileData, 1);
 
     tokenDetails = scan->next();
-    REQUIRE( tokenDetails->token == TokenType::ID );
-    REQUIRE( tokenDetails->str == "hi" );
+    CHECK( tokenDetails->token == TokenType::ID );
+    CHECK( tokenDetails->str == "hi" );
   }
 
   SECTION("will ignore multiline comments") {
