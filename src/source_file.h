@@ -15,6 +15,7 @@ public:
   SourceFile(std::ifstream * stream);
   virtual int nextChar();
   virtual int previewChar();
+  virtual void restoreChar();
 };
 
 #endif

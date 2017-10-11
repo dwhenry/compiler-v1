@@ -79,7 +79,7 @@ TokenDetails * Scan::next() {
       if(!isdigit(c)) {
         state = DONE;
         save = false;
-        // this->sourceFile->restoreChar();
+        this->sourceFile->restoreChar();
         currentToken = TokenType::NUM;
       }
       break;
@@ -87,7 +87,7 @@ TokenDetails * Scan::next() {
       if(!isalpha(c)) {
         state = DONE;
         save = false;
-        // this->sourceFile->restoreChar();
+        this->sourceFile->restoreChar();
         tokenString[tokenPosition] = '\0';
         currentToken = lookup((std::string)tokenString);
       }

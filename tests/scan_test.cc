@@ -67,6 +67,26 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
     CHECK( tokenDetails->startPosition == 5 );
   }
 
+  SECTION("that contain a value assignment with no spaces") {
+    fakeFileData[0] = "hi=12";
+    config->setData( fakeFileData, 1);
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::ID );
+    CHECK( tokenDetails->str == "hi" );
+    CHECK( tokenDetails->startPosition == 0 );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::ASSIGN );
+    CHECK( tokenDetails->str == "=" );
+    CHECK( tokenDetails->startPosition == 2 );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::NUM );
+    CHECK( tokenDetails->str == "12" );
+    CHECK( tokenDetails->startPosition == 3 );
+  }
+
   SECTION("will ignore comments after a token") {
     fakeFileData[0] = "hi /* comment */";
     config->setData( fakeFileData, 1);

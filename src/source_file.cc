@@ -14,4 +14,8 @@ int SourceFile::nextChar() {
 
 int SourceFile::previewChar() {
   return 'b';
-}
+};
+
+void SourceFile::restoreChar() {
+  this->position--;;
+};
