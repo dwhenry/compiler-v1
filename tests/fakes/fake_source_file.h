@@ -1,7 +1,7 @@
 #include "../../src/source_file.h"
 
 class FakeSourceFile : public SourceFile {
-  char * data[10];
+  std::string data[10];
   int rows;
   int cols;
 
@@ -16,9 +16,7 @@ public:
     if(this->position >= this->cols) {
       this->position = 0;
       this->lineNumber++;
-      this->cols = strlen(this->data[this->lineNumber]);
-      std::cout << "lengh of line: " << this->lineNumber << " is " << this->cols << "\n";
-      std::cout << "string is: '" << this->data[this->lineNumber] << "'\n";
+      this->cols = this->data[this->lineNumber].size();
     }
     return val;
   };
@@ -27,12 +25,13 @@ public:
     return this->data[this->lineNumber][this->position];
   }
 
-  void setData(char * data[], int rows) {
+  void setData(std::string data[], int rows) {
     this->lineNumber = 0;
     this->position = 0;
     this->rows = rows;
-    this->cols = strlen(data[this->lineNumber]);
-    this->data = data;
-      std::cout << "lengh of line: " << this->lineNumber << " is " << this-> cols << " : '" << (std::string)(this->data[this->lineNumber]) << "'\n";
+    this->cols = data[this->lineNumber].size();
+    for(int i=0; i < rows; i++) {
+      this->data[i] = data[i];
+    }
   };
 };

@@ -35,7 +35,6 @@ TokenDetails * Scan::next() {
             this->sourceFile->nextChar(); // consume the previewed character
             save = false;
             state = IS_COMMENT;
-            std::cout << "Comment: ";
           } else {
             state = DONE;
             currentToken = TokenType::DIVIDE;
@@ -70,9 +69,7 @@ TokenDetails * Scan::next() {
       break;
     case IS_COMMENT:
       save = false;
-      std::cout << (char)c;
       if(c == '*' && this->sourceFile->previewChar() == '/') {
-        std::cout << "\n";
         this->sourceFile->nextChar(); // consume the previewed character
         state = START;
       };

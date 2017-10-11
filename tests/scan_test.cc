@@ -3,22 +3,16 @@
 #include "fakes/fake_config.h"
 
 TEST_CASE("Reading tokens from a string", "[scan]" ) {
-  char * argv[0];
-  char *  fakeFileData[3];
-  fakeFileData[1] = (char *)"empty";
-  fakeFileData[2] = (char *)"empty";
+  std::string fakeFileData[3];
+  fakeFileData[1] = "";
+  fakeFileData[2] = "";
 
   FakeConfig * config = new FakeConfig();
   Scan * scan = new Scan(config);
   TokenDetails * tokenDetails;
 
   SECTION("that contain a single reserverd word") {
-    fakeFileData[0] = (char *)"if";
-
-    std::cout << "test 1:\n";
-    std::cout << "line 1:" <<  fakeFileData[0] << "\n";
-    std::cout << "line 2:" <<  fakeFileData[1] << "\n";
-    std::cout << "line 3:" <<  fakeFileData[2] << "\n";
+    fakeFileData[0] = "if";
 
     config->setData( fakeFileData, 1);
     tokenDetails = scan->next();
@@ -27,7 +21,7 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
   }
 
   SECTION("that contain a single number") {
-    fakeFileData[0] = (char *)"1234";
+    fakeFileData[0] = "1234";
     config->setData( fakeFileData, 1);
 
     tokenDetails = scan->next();
@@ -36,7 +30,7 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
   }
 
   SECTION("that contain an identifier") {
-    fakeFileData[0] = (char *)"hi";
+    fakeFileData[0] = "hi";
     config->setData( fakeFileData, 1);
 
     tokenDetails = scan->next();
@@ -45,7 +39,7 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
   }
 
   SECTION("it can detect the end of the file") {
-    fakeFileData[0] = (char *)"hi";
+    fakeFileData[0] = "hi";
     config->setData( fakeFileData, 1);
 
     scan->next();
@@ -54,7 +48,7 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
   }
 
   SECTION("that contain a value assignment") {
-    fakeFileData[0] = (char *)"hi = 12";
+    fakeFileData[0] = "hi = 12";
     config->setData( fakeFileData, 1);
 
     tokenDetails = scan->next();
@@ -74,7 +68,7 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
   }
 
   SECTION("will ignore comments after a token") {
-    fakeFileData[0] = (char *)"hi /* comment */";
+    fakeFileData[0] = "hi /* comment */";
     config->setData( fakeFileData, 1);
 
     scan->next();
@@ -83,7 +77,7 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
   }
 
   SECTION("will not eb tricked by stupid comments") {
-    fakeFileData[0] = (char *)"/*/ hi */";
+    fakeFileData[0] = "/*/ hi */";
     config->setData( fakeFileData, 1);
 
     tokenDetails = scan->next();
@@ -91,7 +85,7 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
   }
 
   SECTION("will ignore comments before a token") {
-    fakeFileData[0] = (char *)"/* comment */ hi";
+    fakeFileData[0] = "/* comment */ hi";
     config->setData( fakeFileData, 1);
 
     tokenDetails = scan->next();
@@ -100,9 +94,9 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
   }
 
   SECTION("will ignore multiline comments") {
-    fakeFileData[0] = (char *)"/* comment start";
-    fakeFileData[1] = (char *)"12345";
-    fakeFileData[2] = (char *)"comment end */ 54321";
+    fakeFileData[0] = "/* comment start";
+    fakeFileData[1] = "12345";
+    fakeFileData[2] = "comment end */ 54321";
     config->setData( fakeFileData, 3);
 
     tokenDetails = scan->next();

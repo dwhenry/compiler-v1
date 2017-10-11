@@ -11,7 +11,7 @@ public:
     return this->fakeSourceFile;
   };
 
-  void setData(char * data[], int rows) {
+  void setData(std::string data[], int rows) {
     this->fakeSourceFile->setData(data, rows);
   };
 };
