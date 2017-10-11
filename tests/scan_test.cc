@@ -103,4 +103,90 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
     CHECK( tokenDetails->token == TokenType::NUM );
     CHECK( tokenDetails->str == "54321" );
   }
+
+  SECTION("Special symbols") {
+    fakeFileData[0] = "+ -  * / < <= > >= == != = ; ,";
+    config->setData( fakeFileData, 1);
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::PLUS );
+    CHECK( tokenDetails->str == "+" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::MINUS );
+    CHECK( tokenDetails->str == "-" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::TIMES );
+    CHECK( tokenDetails->str == "*" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::DIVIDE );
+    CHECK( tokenDetails->str == "/" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::LT );
+    CHECK( tokenDetails->str == "<" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::LTEQ );
+    CHECK( tokenDetails->str == "<=" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::GT );
+    CHECK( tokenDetails->str == ">" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::GTEQ );
+    CHECK( tokenDetails->str == ">=" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::EQ );
+    CHECK( tokenDetails->str == "==" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::NOTEQ );
+    CHECK( tokenDetails->str == "!=" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::ASSIGN );
+    CHECK( tokenDetails->str == "=" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::SEMI );
+    CHECK( tokenDetails->str == ";" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::COMMA );
+    CHECK( tokenDetails->str == "," );
+  }
+
+  SECTION("Bracket") {
+    fakeFileData[0] = "()[]{}";
+    config->setData( fakeFileData, 1);
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::L_BR );
+    CHECK( tokenDetails->str == "(" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::R_BR );
+    CHECK( tokenDetails->str == ")" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::L_SQUARE_BR );
+    CHECK( tokenDetails->str == "[" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::R_SQUARE_BR );
+    CHECK( tokenDetails->str == "]" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::L_SQUIGGLE_BR );
+    CHECK( tokenDetails->str == "{" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::R_SQUIGGLE_BR );
+    CHECK( tokenDetails->str == "}" );
+  }
 }

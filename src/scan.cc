@@ -1,6 +1,35 @@
 #include "globals.h"
 #include "scan.h"
 
+static struct
+  {
+    int current;
+    int preview;
+    TokenType::TOKENS token;
+  } tokenMap[MAXRESERVED]
+  = {
+    {'+', '\0', TokenType::PLUS},
+    {'-', '\0', TokenType::MINUS},
+    {'*', '\0', TokenType::TIMES},
+    {'/', '\0', TokenType::DIVIDE},
+    {'<', '=', TokenType::LTEQ},
+    {'<', '\0', TokenType::LT},
+    {'>', '=',TokenType::GTEQ},
+    {'>', '\0', TokenType::GT},
+    {'=', '=', TokenType::EQ},
+    {'=', '\0', TokenType::ASSIGN},
+    {'!', '=', TokenType::NOTEQ},
+    {';', '\0', TokenType::SEMI},
+    {',', '\0', TokenType::COMMA},
+
+    {'(', '\0', TokenType::L_BR},
+    {')', '\0', TokenType::R_BR},
+    {'[', '\0', TokenType::L_SQUARE_BR},
+    {']', '\0', TokenType::R_SQUARE_BR},
+    {'{', '\0', TokenType::L_SQUIGGLE_BR},
+    {'}', '\0', TokenType::R_SQUIGGLE_BR}
+  };
+
 TokenDetails * Scan::next() {
   int state = START;
   char tokenString[MAX_TOKEN_LENGTH];
@@ -23,31 +52,27 @@ TokenDetails * Scan::next() {
       } else if ((c == ' ') || (c == '\t') || (c == '\n')) {
         startPosition = this->sourceFile->position;
         save = false;
+      } else if(c == -1) {
+        state = DONE;
+        currentToken = TokenType::ENDFILE;
+        save = false;
+      } else if(c == '/' && this->sourceFile->previewChar() == '*') {
+        this->sourceFile->nextChar(); // consume the previewed character
+        save = false;
+        state = IS_COMMENT;
       } else {
-        switch(c) {
-        case -1:
-          state = DONE;
-          currentToken = TokenType::ENDFILE;
-          save = false;
-          break;
-        case '/':
-          if(this->sourceFile->previewChar() == '*') {
-            this->sourceFile->nextChar(); // consume the previewed character
-            save = false;
-            state = IS_COMMENT;
-          } else {
-            state = DONE;
-            currentToken = TokenType::DIVIDE;
-          }
-          break;
-        case '=':
-          state = DONE;
+        for(int i=0; i < MAXRESERVED; i++) {
+          if(tokenMap[i].current == c && (tokenMap[i].preview == '\0' || tokenMap[i].preview == this->sourceFile->previewChar())) {
+            if(tokenMap[i].preview != '\0') {
+              tokenString[tokenPosition++] = c;
+              c = this->sourceFile->nextChar();
+            }
 
-          currentToken = TokenType::ASSIGN;
-          break;
+            state = DONE;
+            currentToken = tokenMap[i].token;
+            break;
+          }
         }
-        // other characters
-        // PLUS,MINUS,TIMES,DIVIDE,LT,LTEQ,GT,GTEQ,EQ,NOTEQ,ASSIGN,SEMI,COMMA,
       }
       break;
     case IS_NUMBER:
@@ -62,7 +87,7 @@ TokenDetails * Scan::next() {
       if(!isalpha(c)) {
         state = DONE;
         save = false;
-        //this->sourceFile->restoreChar();
+        // this->sourceFile->restoreChar();
         tokenString[tokenPosition] = '\0';
         currentToken = lookup((std::string)tokenString);
       }

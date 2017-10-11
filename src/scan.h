@@ -4,6 +4,7 @@
 #include "globals.h"
 #include "config.h"
 
+#define MAXRESERVED 19
 
 class Scan {
   enum STATES { START, DONE, IS_NUMBER, IS_WORD, IS_COMMENT };
