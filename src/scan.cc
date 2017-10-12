@@ -30,6 +30,14 @@ static struct
     {'}', '\0', TokenType::R_SQUIGGLE_BR}
   };
 
+void Scan::consumeComment() {
+  this->sourceFile->nextChar(); // consume the previewed character
+  save = false;
+      if(c == '*' && this->sourceFile->previewChar() == '/') {
+        this->sourceFile->nextChar(); // consume the previewed character
+      };
+};
+
 TokenDetails * Scan::next() {
   int state = START;
   char tokenString[MAX_TOKEN_LENGTH];
@@ -57,6 +65,7 @@ TokenDetails * Scan::next() {
         currentToken = TokenType::ENDFILE;
         save = false;
       } else if(c == '/' && this->sourceFile->previewChar() == '*') {
+        consumeComment()
         this->sourceFile->nextChar(); // consume the previewed character
         save = false;
         state = IS_COMMENT;
@@ -92,13 +101,6 @@ TokenDetails * Scan::next() {
         currentToken = lookup((std::string)tokenString);
       }
       break;
-    case IS_COMMENT:
-      save = false;
-      if(c == '*' && this->sourceFile->previewChar() == '/') {
-        this->sourceFile->nextChar(); // consume the previewed character
-        state = START;
-      };
-    }
     if(save) {
       tokenString[tokenPosition++] = c;
     }
@@ -121,9 +123,6 @@ TokenType::TOKENS Scan::lookup(std::string tokenString) {
     return TokenType::ID;
   }
 }
-
-
-
 
 Scan::Scan(Config * config) {
   this->sourceFile = config->sourceFile();

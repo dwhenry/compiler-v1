@@ -11,6 +11,7 @@ class Scan {
 
   SourceFile * sourceFile;
   TokenType::TOKENS lookup(std::string tokenString);
+  void consumeComment();
 
 public:
   Scan(Config * config);
