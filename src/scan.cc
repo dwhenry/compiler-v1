@@ -58,56 +58,53 @@ void Scan::consumeWhile(char tokenString[], checkFunction func) {
 }
 
 TokenDetails * Scan::next() {
-  int state = START;
   int c;
   char tokenString[MAX_TOKEN_LENGTH];
 
   TokenDetails * token = new TokenDetails();
-  token->lineNumber = this->sourceFile->lineNumber;
-  token->startPosition = this->sourceFile->position;
 
-  while (state != DONE) {
+  // consume comments and spacing
+  while(true) {
     c = this->sourceFile->nextChar();
-
-    if(isdigit(c)) {
-      tokenString[0] = c;
-      consumeWhile(tokenString, &isdigit);
-      state = DONE;
-      token->token = TokenType::NUM;
-    } else if (isalpha(c)) {
-      tokenString[0] = c;
-      consumeWhile(tokenString, &isalpha);
-      state = DONE;
-      token->token = lookup((std::string)tokenString);
-    } else if ((c == ' ') || (c == '\t') || (c == '\n')) {
+    if ((c == ' ') || (c == '\t') || (c == '\n')) {
       token->startPosition = this->sourceFile->position;
     } else if(c == EOF) {
-      state = DONE;
       token->token = TokenType::ENDFILE;
+      return token;
     } else if(c == '/' && this->sourceFile->previewChar() == '*') {
       consumeComment();
-      token->lineNumber = this->sourceFile->lineNumber;
-      token->startPosition = this->sourceFile->position;
     } else {
-      for(int i=0; i < MAXRESERVED; i++) {
-        if(tokenMap[i].current == c && (tokenMap[i].preview == '\0' || tokenMap[i].preview == this->sourceFile->previewChar())) {
-          tokenString[0] = c;
-          if(tokenMap[i].preview != '\0') {
-            tokenString[1] = this->sourceFile->nextChar();
-            tokenString[2] = '\0';
-          } else {
-            tokenString[1] = '\0';
-          }
+      break;
+    }
+  }
 
-          state = DONE;
-          token->token = tokenMap[i].token;
-          break;
+  token->lineNumber = this->sourceFile->lineNumber;
+  token->startPosition = this->sourceFile->position - 1;
+
+  tokenString[0] = c;
+
+  if(isdigit(c)) {
+    consumeWhile(tokenString, &isdigit);
+    token->token = TokenType::NUM;
+  } else if (isalpha(c)) {
+    consumeWhile(tokenString, &isalpha);
+    token->token = lookup((std::string)tokenString);
+  } else {
+    for(int i=0; i < MAXRESERVED; i++) {
+      if(tokenMap[i].current == c && (tokenMap[i].preview == '\0' || tokenMap[i].preview == this->sourceFile->previewChar())) {
+        if(tokenMap[i].preview != '\0') {
+          tokenString[1] = this->sourceFile->nextChar();
+          tokenString[2] = '\0';
+        } else {
+          tokenString[1] = '\0';
         }
-      }
-      if(state != DONE) {
-        std::cout << "unable to determine state for:" << c << "\n";
+
+        token->token = tokenMap[i].token;
+        break;
       }
     }
+    if(!token->token)
+    throw "unable to determine state for:";
   }
 
   token->str = tokenString;
