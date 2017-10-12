@@ -1,0 +1,4 @@
+main
+app_test
+a.out.*
+*.gch
