@@ -31,22 +31,42 @@ static struct
   };
 
 void Scan::consumeComment() {
+  int c;
   this->sourceFile->nextChar(); // consume the previewed character
-  save = false;
-      if(c == '*' && this->sourceFile->previewChar() == '/') {
-        this->sourceFile->nextChar(); // consume the previewed character
-      };
+  while(true) {
+    c = this->sourceFile->nextChar();
+    if(c == '*' && this->sourceFile->previewChar() == '/') {
+      this->sourceFile->nextChar(); // consume the previewed character
+      return;
+    };
+  }
 };
+
+void Scan::consumeWhile(char tokenString[], checkFunction func) {
+  int pos = 1;
+  int c;
+  while(true) {
+    c = this->sourceFile->nextChar();
+    if(!func(c)) {
+      tokenString[pos] = '\0';
+      this->sourceFile->restoreChar();
+      break;
+    } else {
+      tokenString[pos++] = c;
+    }
+  }
+}
 
 TokenDetails * Scan::next() {
   int state = START;
-  char tokenString[MAX_TOKEN_LENGTH];
   int c;
+  char tokenString[MAX_TOKEN_LENGTH];
   int tokenPosition = 0;
   bool save;
-  TokenType::TOKENS currentToken;
-  int startLine = this->sourceFile->lineNumber;
-  int startPosition = this->sourceFile->position;
+
+  TokenDetails * token = new TokenDetails();
+  token->lineNumber = this->sourceFile->lineNumber;
+  token->startPosition = this->sourceFile->position;
 
   while (state != DONE) {
     save = true;
@@ -54,21 +74,29 @@ TokenDetails * Scan::next() {
     switch (state) {
     case START:
       if(isdigit(c)) {
-        state = IS_NUMBER;
-      } else if (isalpha(c)) {
-        state = IS_WORD;
-      } else if ((c == ' ') || (c == '\t') || (c == '\n')) {
-        startPosition = this->sourceFile->position;
+        tokenString[0] = c;
+        consumeWhile(tokenString, &isdigit);
         save = false;
-      } else if(c == -1) {
         state = DONE;
-        currentToken = TokenType::ENDFILE;
+        token->token = TokenType::NUM;
+      } else if (isalpha(c)) {
+        tokenString[0] = c;
+        consumeWhile(tokenString, &isalpha);
+        save = false;
+        state = DONE;
+        token->token = lookup((std::string)tokenString);
+      } else if ((c == ' ') || (c == '\t') || (c == '\n')) {
+        token->startPosition = this->sourceFile->position;
+        save = false;
+      } else if(c == EOF) {
+        state = DONE;
+        token->token = TokenType::ENDFILE;
         save = false;
       } else if(c == '/' && this->sourceFile->previewChar() == '*') {
-        consumeComment()
-        this->sourceFile->nextChar(); // consume the previewed character
+        consumeComment();
+        token->lineNumber = this->sourceFile->lineNumber;
+        token->startPosition = this->sourceFile->position;
         save = false;
-        state = IS_COMMENT;
       } else {
         for(int i=0; i < MAXRESERVED; i++) {
           if(tokenMap[i].current == c && (tokenMap[i].preview == '\0' || tokenMap[i].preview == this->sourceFile->previewChar())) {
@@ -78,40 +106,24 @@ TokenDetails * Scan::next() {
             }
 
             state = DONE;
-            currentToken = tokenMap[i].token;
+            token->token = tokenMap[i].token;
             break;
           }
         }
+        if(state != DONE) {
+          std::cout << "unable to determine state for:" << c << "\n";
+        }
       }
       break;
-    case IS_NUMBER:
-      if(!isdigit(c)) {
-        state = DONE;
-        save = false;
-        this->sourceFile->restoreChar();
-        currentToken = TokenType::NUM;
-      }
-      break;
-    case IS_WORD:
-      if(!isalpha(c)) {
-        state = DONE;
-        save = false;
-        this->sourceFile->restoreChar();
-        tokenString[tokenPosition] = '\0';
-        currentToken = lookup((std::string)tokenString);
-      }
-      break;
+    }
     if(save) {
       tokenString[tokenPosition++] = c;
     }
   }
+  if(tokenPosition > 0)
   tokenString[tokenPosition] = '\0';
 
-  TokenDetails * token = new TokenDetails();
-  token->token = currentToken;
   token->str = tokenString;
-  token->lineNumber = startLine;
-  token->startPosition = startPosition;
   return token;
 };
 
