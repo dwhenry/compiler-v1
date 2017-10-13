@@ -9,16 +9,15 @@ public:
   FakeSourceFile() {};
 
   int nextChar() {
-    if(this->lineNumber >= this->rows) {
-      return EOF;
-    }
-    int val = this->data[this->lineNumber][this->position++];
     if(this->position >= this->cols) {
       this->position = 0;
       this->lineNumber++;
       this->cols = this->data[this->lineNumber].size();
     }
-    return val;
+    if(this->lineNumber >= this->rows) {
+      return EOF;
+    }
+    return this->data[this->lineNumber][this->position++];
   };
 
   int previewChar() {

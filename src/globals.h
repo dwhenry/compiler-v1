@@ -8,7 +8,7 @@ namespace TokenType {
     /* book-keeping tokens */
     ENDFILE, //ERROR,
     /* reserved words */
-    IF, ELSE, INT, //RETURN, VOID, WHILE,
+    IF, ELSE, INT, RETURN, VOID, WHILE,
     /* multicharacter tokens */
     ID,NUM,
     /* special symbols */

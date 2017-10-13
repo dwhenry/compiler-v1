@@ -216,4 +216,33 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
     CHECK( tokenDetails->token == TokenType::R_SQUIGGLE_BR );
     CHECK( tokenDetails->str == "}" );
   }
+
+  SECTION("Reserved words") {
+    fakeFileData[0] = "if else int return void while";
+    config->setData( fakeFileData, 1);
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::IF );
+    CHECK( tokenDetails->str == "if" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::ELSE );
+    CHECK( tokenDetails->str == "else" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::INT );
+    CHECK( tokenDetails->str == "int" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::RETURN );
+    CHECK( tokenDetails->str == "return" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::VOID );
+    CHECK( tokenDetails->str == "void" );
+
+    tokenDetails = scan->next();
+    CHECK( tokenDetails->token == TokenType::WHILE );
+    CHECK( tokenDetails->str == "while" );
+  }
 }
