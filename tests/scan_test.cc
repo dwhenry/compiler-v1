@@ -113,6 +113,13 @@ TEST_CASE("Reading tokens from a string", "[scan]" ) {
     CHECK( tokenDetails->str == "hi" );
   }
 
+  SECTION("will not hang on unclosed comment") {
+    fakeFileData[0] = "/* comment ";
+    config->setData( fakeFileData, 1);
+
+    CHECK_THROWS( tokenDetails = scan->next() );
+  }
+
   SECTION("will ignore multiline comments") {
     fakeFileData[0] = "/* comment start";
     fakeFileData[1] = "12345";

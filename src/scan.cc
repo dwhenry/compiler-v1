@@ -38,7 +38,9 @@ void Scan::consumeComment() {
     if(c == '*' && this->sourceFile->previewChar() == '/') {
       this->sourceFile->nextChar(); // consume the previewed character
       return;
-    };
+    } else if(c == EOF) {
+      throw "Unclosed comment.";
+    }
   }
 };
 
@@ -104,7 +106,7 @@ TokenDetails * Scan::next() {
       }
     }
     if(!token->token)
-    throw "unable to determine state for:";
+    throw "Parse error, invalid character"; //.append((char*)c).append(" at "); // + token->lineNumber + ":" + token->position;
   }
 
   token->str = tokenString;
