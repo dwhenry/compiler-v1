@@ -25,11 +25,14 @@ scan_test.o: tests/scan_test.cc src/scan.cc tests/fakes/fake_config.h tests/fake
 config_test.o: tests/config_test.cc
 	g++ $(CFLAGS) -g -c tests/config_test.cc
 
+source_file_test.o: tests/source_file_test.cc
+	g++ $(CFLAGS) -g -c tests/source_file_test.cc
+
 test.o: tests/test.cc
 	g++ $(CFLAGS) -g -c tests/test.cc
 
-app_test: test.o source_file.o config_test.o config.o scan_test.o scan.o tests/fakes/fake_config.h tests/fakes/fake_source_file.h
-	g++ $(CFLAGS) -g -o app_test test.o source_file.o config_test.o config.o scan_test.o scan.o
+app_test: test.o source_file.o source_file_test.o config_test.o config.o scan_test.o scan.o tests/fakes/fake_config.h tests/fakes/fake_source_file.h
+	g++ $(CFLAGS) -g -o app_test test.o source_file.o source_file_test.o config_test.o config.o scan_test.o scan.o
 
 clean:
 	rm -f app_test app ./*.o
